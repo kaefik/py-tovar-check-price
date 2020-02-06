@@ -2,8 +2,16 @@ import requests
 from bs4 import BeautifulSoup
 
 
-#from requests_ntlm import HttpNtlmAuth  # https://github.com/requests/requests-ntlm
+# from requests_ntlm import HttpNtlmAuth  # https://github.com/requests/requests-ntlm
 # используется библиотека - https://github.com/jborean93/ntlm-auth
+
+# преобразование строки вида "SAMSUNG a50 64\\xd0\\xb3\\xd0\\xb1" в строку c кодировкой encoding
+def string_escape(s, encoding="utf-8"):
+    import codecs
+    byte_s = bytes(s, encoding)
+    res = codecs.escape_decode(byte_s)[0]
+    res = res.decode(encoding)
+    return res
 
 
 # сохранить в файл html из urls
@@ -24,31 +32,34 @@ def savefile_from_url(urls, filename):
         return True
     return False
 
+
 # получить данные из объявления авито
 def getdata_from_avito(html_content):
-
     tovar = dict.fromkeys(["title", "price", "adress", "seller"])
     soup = BeautifulSoup(html_content, "html.parser")
-    #print(soup.prettify())
+    # print(soup.prettify())
     # заголовок объявления
     title = soup.select_one('h1[class="title-info-title"]').text
-    tovar["title"] = title
-    print(tovar)
+    title = string_escape(title)
+    tovar["title"] = title.strip()
+    # print(tovar)
     # цена
     price = soup.select_one('span[class="js-item-price"]').text
-    tovar["price"] = price
-    print(tovar)
+    tovar["price"] = price.strip()
+    # print(tovar)
     # адрес
     adress = soup.select_one('span[class="item-address__string"]').text
-    tovar["adress"] = adress
-    print(tovar)
+    adress = string_escape(adress)
+    tovar["adress"] = adress.strip()
+    # print(tovar)
     # владелец
     seller = soup.select_one('div[class~="seller-info-name"]').text
-    tovar["seller"] = seller
+    seller = string_escape(seller)
+    tovar["seller"] = seller.strip()
     print(tovar)
 
 
-if __name__ =="__main__":
+if __name__ == "__main__":
     """
     # активное объявление
     url = "https://www.avito.ru/kazan/telefony/samsung_a50_64gb_1855500408"
@@ -69,4 +80,3 @@ if __name__ =="__main__":
         html_content = f.read()
 
     getdata_from_avito(html_content)
-
