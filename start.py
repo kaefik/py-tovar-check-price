@@ -35,7 +35,13 @@ def savefile_from_url(urls, filename):
 
 # получить данные из объявления авито
 def getdata_from_avito(html_content):
-    tovar = dict.fromkeys(["title", "price", "adress", "seller"])
+    # "title"   -заголовок товара
+    # "price"   - цена
+    # "adress"  - адрес
+    # "seller"  - продавец
+    # "txt"     - описание
+    # "category"- категория
+    tovar = dict.fromkeys(["title", "price", "adress", "seller", "txt", "category"])
     soup = BeautifulSoup(html_content, "html.parser")
     # print(soup.prettify())
     # заголовок объявления
@@ -56,6 +62,12 @@ def getdata_from_avito(html_content):
     seller = soup.select_one('div[class~="seller-info-name"]').text
     seller = string_escape(seller)
     tovar["seller"] = seller.strip()
+    # текст объявления
+    txt = soup.select_one('div[class="item-description-text"]').text
+    txt = string_escape(txt)
+    tovar["txt"] = txt.strip()
+    # категория
+
     print(tovar)
 
 
