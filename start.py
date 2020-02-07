@@ -35,7 +35,7 @@ def savefile_from_url(urls, filename):
 
 # получить данные из объявления авито
 def getdata_from_avito(html_content):
-    # "title"   -заголовок товара
+    # "title"   - заголовок товара
     # "price"   - цена
     # "adress"  - адрес
     # "seller"  - продавец
