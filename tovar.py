@@ -10,7 +10,7 @@ def string_escape(s, encoding="utf-8"):
 
 class Tovar(object):
 
-    def __init__(self):
+    def __init__(self, url=None):
         # "title"   - заголовок товара
         # "price"   - цена
         # "adress"  - адрес
@@ -19,34 +19,36 @@ class Tovar(object):
         # "category"- категория
         # "url"     - урл товара
         self.data = dict.fromkeys(["title", "price", "adress", "seller", "txt", "category", "url"])
+        self.data["url"] = url
 
     # получить данные из объявления авито
     def getdata_from_avito(self, html_content):
         soup = BeautifulSoup(html_content, "html.parser")
         # print(soup.prettify())
         # заголовок объявления
-        title = soup.select_one('h1[class="title-info-title"]').text
-        title = string_escape(title)
-        self.data["title"] = title.strip()
-        # print(tovar)
+        title = soup.select_one('h1[class="title-info-title"]')
+        if title is not None:
+            title = string_escape(title.text)
+            self.data["title"] = title.strip()
         # цена
-        price = soup.select_one('span[class="js-item-price"]').text
-        self.data["price"] = price.strip()
-        # print(tovar)
+        price = soup.select_one('span[class="js-item-price"]')
+        if price is not None:
+            self.data["price"] = price.text.strip()
         # адрес
-        adress = soup.select_one('span[class="item-address__string"]').text
-        adress = string_escape(adress)
-        self.data["adress"] = adress.strip()
-        # print(tovar)
+        adress = soup.select_one('span[class="item-address__string"]')
+        if adress is not None:
+            adress = string_escape(adress.text)
+            self.data["adress"] = adress.strip()
         # владелец
-        seller = soup.select_one('div[class~="seller-info-name"]').text
-        seller = string_escape(seller)
-        self.data["seller"] = seller.strip()
+        seller = soup.select_one('div[class~="seller-info-name"]')
+        if seller is not None:
+            seller = string_escape(seller.text)
+            self.data["seller"] = seller.strip()
         # текст объявления
-        txt = soup.select_one('div[class="item-description-text"]').text
-        txt = string_escape(txt)
-        self.data["txt"] = txt.strip()
-
+        txt = soup.select_one('div[class="item-description-text"]')
+        if txt is not None:
+            txt = string_escape(txt.text)
+            self.data["txt"] = txt.strip()
 
 if __name__ == "__main__":
     filename = "./data/inf.html"
