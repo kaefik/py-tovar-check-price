@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 
+
 # преобразование строки вида "SAMSUNG a50 64\\xd0\\xb3\\xd0\\xb1" в строку c кодировкой encoding
 def string_escape(s, encoding="utf-8"):
     import codecs
@@ -7,6 +8,7 @@ def string_escape(s, encoding="utf-8"):
     res = codecs.escape_decode(byte_s)[0]
     res = res.decode(encoding)
     return res
+
 
 class Tovar(object):
 
@@ -33,7 +35,9 @@ class Tovar(object):
         # цена
         price = soup.select_one('span[class="js-item-price"]')
         if price is not None:
-            self.data["price"] = price.text.strip()
+            price = price.text.strip()
+            price = price.replace(" ", "")
+            self.data["price"] = int(price)
         # адрес
         adress = soup.select_one('span[class="item-address__string"]')
         if adress is not None:
@@ -50,6 +54,22 @@ class Tovar(object):
             txt = string_escape(txt.text)
             self.data["txt"] = txt.strip()
 
+    # сравнение цен товаров ==
+    def __eq__(self, other):
+        res = self.data["price"] == other.data["price"]
+        return res
+
+    # сравнение цен товаров >
+    def __gt__(self, other):
+        res = self.data["price"] > other.data["price"]
+        return res
+
+    # сравнение цен товаров <
+    def __lt__(self, other):
+        res = self.data["price"] < other.data["price"]
+        return res
+
+
 if __name__ == "__main__":
     filename = "./data/inf.html"
     html_content = ""
@@ -60,6 +80,9 @@ if __name__ == "__main__":
     avito_tovar.getdata_from_avito(html_content)
     print(avito_tovar.data)
 
+    avito_tovar2 = Tovar()
+    avito_tovar2.getdata_from_avito(html_content)
+    avito_tovar2.data["price"] = 12001
+    print(avito_tovar2.data)
 
-
-
+    print(avito_tovar < avito_tovar2)
