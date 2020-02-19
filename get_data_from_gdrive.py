@@ -2,6 +2,8 @@
  получение данных из таблицы google drive
 
  Quick start python and google api - https://developers.google.com/sheets/api/quickstart/python
+ install Python client:
+   pip3 install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
 """
 
 from __future__ import print_function
@@ -12,7 +14,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
 # If modifying these scopes, delete the file token.pickle.
-SCOPES = ['https://www.googleapis.com/auth/spreadsheets.update']
+SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
 # The ID and range of a sample spreadsheet.
 INPUT_DATA_SPREADSHEET_ID = '12eg1zud0yTR1Lj36V_jju__l8kUTlyWwjvchUnryci4'
@@ -64,9 +66,16 @@ def main():
     # https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/update
     # https://github.com/googleapis/google-api-python-client
     # https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/update
-    SAMPLE_RANGE_NAME2 = 'avito_result!G:G'
+    SAMPLE_RANGE_NAME2 = 'avito_result!G2:G'
+    value_input_option = 'RAW'  # ['INPUT_VALUE_OPTION_UNSPECIFIED', 'RAW', 'USER_ENTERED']"
+    myvalues = ["150", "sdsd", "sdsd22"]
+    value_range_body = {
+            'majorDimension' : 'COLUMNS',
+            "values": [ myvalues]
+    }
     result = sheet.values().update(spreadsheetId=INPUT_DATA_SPREADSHEET_ID,
-                                range=SAMPLE_RANGE_NAME2).execute()
+                                range=SAMPLE_RANGE_NAME2, valueInputOption=value_input_option, body=value_range_body).execute()
+    #.update(spreadsheetId=spreadsheet_id, range=range_, valueInputOption=value_input_option, body=value_range_body)
 
 if __name__ == '__main__':
     main()
