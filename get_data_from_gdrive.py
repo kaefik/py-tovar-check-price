@@ -13,17 +13,11 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
-# If modifying these scopes, delete the file token.pickle.
-SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
-# The ID and range of a sample spreadsheet.
-INPUT_DATA_SPREADSHEET_ID = '12eg1zud0yTR1Lj36V_jju__l8kUTlyWwjvchUnryci4'
-
-
-def main():
-    """Shows basic usage of the Sheets API.
-    Prints values from a sample spreadsheet.
-    """
+# получение разрешения используя файл json который получается из консоли разработчика
+# https://console.developers.google.com/
+# создать OAuth 2.0 Client IDs  и выбрать тип Other
+def get_credentials_google_api(file_credentials, scopes):
     creds = None
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
@@ -37,16 +31,29 @@ def main():
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', SCOPES)
+                file_credentials, scopes)
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
         with open('token.pickle', 'wb') as token:
             pickle.dump(creds, token)
+    return creds
 
+
+# If modifying these scopes, delete the file token.pickle.
+SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+
+# The ID and range of a sample spreadsheet.
+INPUT_DATA_SPREADSHEET_ID = '12eg1zud0yTR1Lj36V_jju__l8kUTlyWwjvchUnryci4'
+
+
+def main():
+
+    creds = get_credentials_google_api("credentials2.json", SCOPES)
     service = build('sheets', 'v4', credentials=creds)
 
     # Call the Sheets API
     sheet = service.spreadsheets()
+    # получение данных из таблицы и определенного листа
     SAMPLE_RANGE_NAME = 'avito!A:A'
     result = sheet.values().get(spreadsheetId=INPUT_DATA_SPREADSHEET_ID,
                                 range=SAMPLE_RANGE_NAME).execute()
@@ -63,6 +70,7 @@ def main():
             print('%s, %s' % (row[0], row[4]))
         """
 
+    # добавление данных в лист
     # https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/update
     # https://github.com/googleapis/google-api-python-client
     # https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/update
@@ -70,12 +78,14 @@ def main():
     value_input_option = 'RAW'  # ['INPUT_VALUE_OPTION_UNSPECIFIED', 'RAW', 'USER_ENTERED']"
     myvalues = ["150", "sdsd", "sdsd22"]
     value_range_body = {
-            'majorDimension' : 'COLUMNS',
-            "values": [ myvalues]
+        'majorDimension': 'COLUMNS',
+        "values": [myvalues]
     }
     result = sheet.values().update(spreadsheetId=INPUT_DATA_SPREADSHEET_ID,
-                                range=SAMPLE_RANGE_NAME2, valueInputOption=value_input_option, body=value_range_body).execute()
-    #.update(spreadsheetId=spreadsheet_id, range=range_, valueInputOption=value_input_option, body=value_range_body)
+                                   range=SAMPLE_RANGE_NAME2, valueInputOption=value_input_option,
+                                   body=value_range_body).execute()
+    # .update(spreadsheetId=spreadsheet_id, range=range_, valueInputOption=value_input_option, body=value_range_body)
+
 
 if __name__ == '__main__':
     main()
