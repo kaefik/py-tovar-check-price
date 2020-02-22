@@ -1,20 +1,19 @@
 """"
- получение данных из таблицы google drive
+ Работа с классом Таблиц Google Docs
  Quick start python and google api - https://developers.google.com/sheets/api/quickstart/python
- install Python client:
+ install Python client (library):
    pip3 install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
 """
 
-from __future__ import print_function
 import pickle
 import os.path
-from shlex import shlex
 
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
 
+# ------ Вспомогательные функции --------------
 # получение разрешения используя файл json который получается из консоли разработчика
 # https://console.developers.google.com/
 # создать OAuth 2.0 Client IDs  и выбрать тип Other
@@ -48,6 +47,8 @@ def get_sheet_api(creds):
     return sheet
 
 
+# ------ END Вспомогательные функции --------------
+
 # класс для работы с Таблицей Google Docs
 class GDSheet:
 
@@ -58,6 +59,7 @@ class GDSheet:
         self.sheet = get_sheet_api(self.creds)
 
     # получение данных с таблицы spreadsheetId в диапазоне range
+    # https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/get
     def get_values_from_spreadsheet(self, range_cell):
         result = self.sheet.values().get(spreadsheetId=self.spreadsheetId,
                                          range=range_cell).execute()
@@ -67,6 +69,7 @@ class GDSheet:
     # ввод данных input_values в range_cell
     # columns=True - изменение в колонках, иначе изменение в строках
     # value_input_option может принимать следующие значения: ["INPUT_VALUE_OPTION_UNSPECIFIED", "RAW", "USER_ENTERED"]
+    # https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/update
     def set_values_to_spreadsheet(self, range_cell, input_values, columns=True,
                                   value_input_option="RAW"):
         majorDimension = "COLUMNS" if columns else "ROWS"
@@ -82,9 +85,9 @@ class GDSheet:
     # columns=True - изменение в колонках, иначе изменение в строках
     # value_input_option может принимать следующие значения: ["INPUT_VALUE_OPTION_UNSPECIFIED", "RAW", "USER_ENTERED"]
     # insert_data_option может принимать следующие значения: OVERWRITE или INSERT_ROWS
-    # https: // developers.google.com / sheets / api / reference / rest / v4 / spreadsheets.values / append
+    # https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/append
     def append_values_to_spreadsheet(self, range_cell, input_values, columns=True,
-                                     value_input_option="RAW", insert_data_option = "OVERWRITE"):
+                                     value_input_option="RAW", insert_data_option="OVERWRITE"):
         majorDimension = "COLUMNS" if columns else "ROWS"
         value_range_body = {
             "majorDimension": majorDimension,
@@ -94,8 +97,6 @@ class GDSheet:
         result = self.sheet.values().append(spreadsheetId=self.spreadsheetId, range=range_cell,
                                             valueInputOption=value_input_option, insertDataOption=insert_data_option,
                                             body=value_range_body).execute()
-        # append(spreadsheetId=spreadsheet_id, range=range_,
-        # valueInputOption=value_input_option, insertDataOption=insert_data_option, body=value_range_body)
         return result
 
     # очиска ячеек указанных в ranfe_cell
@@ -104,14 +105,13 @@ class GDSheet:
         return result
 
 
-# If modifying these scopes, delete the file token.pickle.
-SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-
-# The ID and range of a sample spreadsheet.
-INPUT_DATA_SPREADSHEET_ID = '12eg1zud0yTR1Lj36V_jju__l8kUTlyWwjvchUnryci4'
-
-
 def main():
+    # If modifying these scopes, delete the file token.pickle.
+    SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+
+    # The ID and range of a sample spreadsheet.
+    INPUT_DATA_SPREADSHEET_ID = '12eg1zud0yTR1Lj36V_jju__l8kUTlyWwjvchUnryci4'
+
     mydata = GDSheet(INPUT_DATA_SPREADSHEET_ID)
 
     # получение данных из таблицы и определенного листа
@@ -138,6 +138,7 @@ def main():
     result = mydata.set_values_to_spreadsheet(SAMPLE_RANGE_NAME3, myvalues2, False)
     print(result)
     """
+
 
 if __name__ == '__main__':
     main()
