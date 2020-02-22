@@ -65,10 +65,11 @@ class GDSheet:
         return values
 
     # ввод данных input_values в range_cell
-    # majorDimension = "COLUMNS" - изменение в колонках, если "ROWS" - изменение в строках
+    # columns=True - изменение в колонках, иначе изменение в строках
     # value_input_option может принимать следующие значения: ["INPUT_VALUE_OPTION_UNSPECIFIED", "RAW", "USER_ENTERED"]
-    def set_values_to_spreadsheet(self, range_cell, input_values, majorDimension="COLUMNS",
+    def set_values_to_spreadsheet(self, range_cell, input_values, columns=True,
                                   value_input_option="RAW"):
+        majorDimension = "COLUMNS" if columns else "ROWS"
         value_range_body = {
             "majorDimension": majorDimension,
             "values": [input_values]
@@ -103,12 +104,12 @@ def main():
     # добавление данных в лист
     SAMPLE_RANGE_NAME2 = 'avito_result!G2:G'
     myvalues = ["15011zasds", "sdsd", "sdsd22", "weq", "eljqwldbqwb"]
-    result = mydata.set_values_to_spreadsheet(SAMPLE_RANGE_NAME2, myvalues, "COLUMNS")
+    result = mydata.set_values_to_spreadsheet(SAMPLE_RANGE_NAME2, myvalues)
     print(result)
 
     SAMPLE_RANGE_NAME3 = 'avito_result!C2'
-    myvalues2 = ["15011zasds", "sdsd", "sdsd22", "weq", "eljqwldbqwb"]
-    result = mydata.set_values_to_spreadsheet(SAMPLE_RANGE_NAME3, myvalues2, "ROWS")
+    myvalues2 = ["hello", "poka", "xoxoxox", "weq", "eljqwldbqwb"]
+    result = mydata.set_values_to_spreadsheet(SAMPLE_RANGE_NAME3, myvalues2, False)
     print(result)
 
 
