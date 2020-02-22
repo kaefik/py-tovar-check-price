@@ -48,38 +48,48 @@ def get_sheet_api(creds):
     return sheet
 
 
-# получение данных с таблицы spreadsheetId в диапазоне range
-def get_values_from_spreadsheet(sheet, spreadsheetId, range_cell):
-    result = sheet.values().get(spreadsheetId=spreadsheetId,
-                                range=range_cell).execute()
-    values = result.get('values', [])
-    return values
+# класс для работы с Таблицей Google Docs
+class GDSheet:
+
+    def __init__(self, spreadsheetId, file_credentials="credentials.json",
+                 scopes=['https://www.googleapis.com/auth/spreadsheets']):
+        self.spreadsheetId = spreadsheetId  # индекс гугл таблицы
+        self.creds = get_credentials_google_api(file_credentials, scopes)
+        self.sheet = get_sheet_api(self.creds)
+
+    # получение данных с таблицы spreadsheetId в диапазоне range
+    def get_values_from_spreadsheet(self, range_cell):
+        result = self.sheet.values().get(spreadsheetId=self.spreadsheetId,
+                                    range=range_cell).execute()
+        values = result.get('values', [])
+        return values
 
 
-# ввод данных input_values в range_cell (колонки)
-# https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/update
-def set_values_to_spreadsheet_columns(sheet, spreadsheetid, range_cell, input_values):
-    value_input_option = 'RAW'  # ['INPUT_VALUE_OPTION_UNSPECIFIED', 'RAW', 'USER_ENTERED']"
-    value_range_body = {
-        "majorDimension": "COLUMNS",
-        "values": [input_values]
-    }
-    result = sheet.values().update(spreadsheetId=spreadsheetid, range=range_cell,
-                                   valueInputOption=value_input_option, body=value_range_body).execute()
-    return result
+    # ввод данных input_values в range_cell (колонки)
+    # https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/update
+    def set_values_to_spreadsheet_columns(self, range_cell, input_values):
+        value_input_option = 'RAW'  # ['INPUT_VALUE_OPTION_UNSPECIFIED', 'RAW', 'USER_ENTERED']"
+        value_range_body = {
+            "majorDimension": "COLUMNS",
+            "values": [input_values]
+        }
+        result = self.sheet.values().update(spreadsheetId=self.spreadsheetId, range=range_cell,
+                                       valueInputOption=value_input_option, body=value_range_body).execute()
+        return result
 
 
-# ввод данных input_values в range_cell (строки)
-# https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/update
-def set_values_to_spreadsheet_rows(sheet, spreadsheetid, range_cell, input_values):
-    value_input_option = 'RAW'  # ['INPUT_VALUE_OPTION_UNSPECIFIED', 'RAW', 'USER_ENTERED']"
-    value_range_body = {
-        "majorDimension": "ROWS",
-        "values": [input_values]
-    }
-    result = sheet.values().update(spreadsheetId=spreadsheetid, range=range_cell,
-                                   valueInputOption=value_input_option, body=value_range_body).execute()
-    return result
+    # ввод данных input_values в range_cell (строки)
+    # https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/update
+    def set_values_to_spreadsheet_rows(self, range_cell, input_values):
+        value_input_option = 'RAW'  # ['INPUT_VALUE_OPTION_UNSPECIFIED', 'RAW', 'USER_ENTERED']"
+        value_range_body = {
+            "majorDimension": "ROWS",
+            "values": [input_values]
+        }
+        result = self.sheet.values().update(spreadsheetId=self.spreadsheetId, range=range_cell,
+                                       valueInputOption=value_input_option, body=value_range_body).execute()
+        return result
+
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
@@ -89,6 +99,27 @@ INPUT_DATA_SPREADSHEET_ID = '12eg1zud0yTR1Lj36V_jju__l8kUTlyWwjvchUnryci4'
 
 
 def main():
+
+    mydata = GDSheet(INPUT_DATA_SPREADSHEET_ID)
+
+    # получение данных из таблицы и определенного листа
+    SAMPLE_RANGE_NAME = 'avito!A1:A'
+    values = mydata.get_values_from_spreadsheet(SAMPLE_RANGE_NAME)
+    print(values)
+
+    # добавление данных в лист
+    SAMPLE_RANGE_NAME2 = 'avito_result!G2:G'
+    myvalues = ["15011zasds", "sdsd", "sdsd22", "weq", "eljqwldbqwb"]
+    result = mydata.set_values_to_spreadsheet_columns(SAMPLE_RANGE_NAME2, myvalues)
+    print(result)
+
+    SAMPLE_RANGE_NAME3 = 'avito_result!C2'
+    myvalues2 = ["15011zasds", "sdsd", "sdsd22", "weq", "eljqwldbqwb"]
+    result = mydata.set_values_to_spreadsheet_rows(SAMPLE_RANGE_NAME3, myvalues2)
+    print(result)
+
+
+    """
     creds = get_credentials_google_api("credentials2.json", SCOPES)
 
     sheet = get_sheet_api(creds)
@@ -103,11 +134,7 @@ def main():
     else:
         print(values)
         print(len(values))
-        """
-        for row in values:
-            # Print columns A and E, which correspond to indices 0 and 4.
-            print('%s, %s' % (row[0], row[4]))
-        """
+    """
 
     """
     # добавление данных в лист
