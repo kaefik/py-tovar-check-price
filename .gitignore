@@ -1,4 +1,9 @@
 .idea/
+credentials.json
+token.pickle
+*.xml
+*.iml
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
