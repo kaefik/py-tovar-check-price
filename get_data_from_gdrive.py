@@ -78,6 +78,26 @@ class GDSheet:
                                             valueInputOption=value_input_option, body=value_range_body).execute()
         return result
 
+    # ввод данных input_values в range_cell
+    # columns=True - изменение в колонках, иначе изменение в строках
+    # value_input_option может принимать следующие значения: ["INPUT_VALUE_OPTION_UNSPECIFIED", "RAW", "USER_ENTERED"]
+    # insert_data_option может принимать следующие значения: OVERWRITE или INSERT_ROWS
+    # https: // developers.google.com / sheets / api / reference / rest / v4 / spreadsheets.values / append
+    def append_values_to_spreadsheet(self, range_cell, input_values, columns=True,
+                                     value_input_option="RAW", insert_data_option = "OVERWRITE"):
+        majorDimension = "COLUMNS" if columns else "ROWS"
+        value_range_body = {
+            "majorDimension": majorDimension,
+            "values": [input_values]
+        }
+
+        result = self.sheet.values().append(spreadsheetId=self.spreadsheetId, range=range_cell,
+                                            valueInputOption=value_input_option, insertDataOption=insert_data_option,
+                                            body=value_range_body).execute()
+        # append(spreadsheetId=spreadsheet_id, range=range_,
+        # valueInputOption=value_input_option, insertDataOption=insert_data_option, body=value_range_body)
+        return result
+
     # очиска ячеек указанных в ranfe_cell
     def clear(self, range_cell):
         result = self.sheet.values().clear(spreadsheetId=self.spreadsheetId, range=range_cell).execute()
@@ -102,6 +122,12 @@ def main():
     # mydata.clear('avito_result!G:G')
 
     # добавление данных в лист
+    SAMPLE_RANGE_NAME2 = 'avito_result!A1'
+    myvalues = ["15011zasds", "sdsd", "sdsd22", "weq", "eljqwldbqwb"]
+    mydata.append_values_to_spreadsheet(SAMPLE_RANGE_NAME2, myvalues)
+
+    """
+    # добавление данных в лист
     SAMPLE_RANGE_NAME2 = 'avito_result!G2:G'
     myvalues = ["15011zasds", "sdsd", "sdsd22", "weq", "eljqwldbqwb"]
     result = mydata.set_values_to_spreadsheet(SAMPLE_RANGE_NAME2, myvalues)
@@ -111,7 +137,7 @@ def main():
     myvalues2 = ["hello", "poka", "xoxoxox", "weq", "eljqwldbqwb"]
     result = mydata.set_values_to_spreadsheet(SAMPLE_RANGE_NAME3, myvalues2, False)
     print(result)
-
+    """
 
 if __name__ == '__main__':
     main()
