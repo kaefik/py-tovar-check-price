@@ -60,34 +60,26 @@ class GDSheet:
     # получение данных с таблицы spreadsheetId в диапазоне range
     def get_values_from_spreadsheet(self, range_cell):
         result = self.sheet.values().get(spreadsheetId=self.spreadsheetId,
-                                    range=range_cell).execute()
+                                         range=range_cell).execute()
         values = result.get('values', [])
         return values
 
-
-    # ввод данных input_values в range_cell (колонки)
-    # https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/update
-    def set_values_to_spreadsheet_columns(self, range_cell, input_values):
-        value_input_option = 'RAW'  # ['INPUT_VALUE_OPTION_UNSPECIFIED', 'RAW', 'USER_ENTERED']"
+    # ввод данных input_values в range_cell
+    # majorDimension = "COLUMNS" - изменение в колонках, если "ROWS" - изменение в строках
+    # value_input_option может принимать следующие значения: ["INPUT_VALUE_OPTION_UNSPECIFIED", "RAW", "USER_ENTERED"]
+    def set_values_to_spreadsheet(self, range_cell, input_values, majorDimension="COLUMNS",
+                                  value_input_option="RAW"):
         value_range_body = {
-            "majorDimension": "COLUMNS",
+            "majorDimension": majorDimension,
             "values": [input_values]
         }
         result = self.sheet.values().update(spreadsheetId=self.spreadsheetId, range=range_cell,
-                                       valueInputOption=value_input_option, body=value_range_body).execute()
+                                            valueInputOption=value_input_option, body=value_range_body).execute()
         return result
 
-
-    # ввод данных input_values в range_cell (строки)
-    # https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/update
-    def set_values_to_spreadsheet_rows(self, range_cell, input_values):
-        value_input_option = 'RAW'  # ['INPUT_VALUE_OPTION_UNSPECIFIED', 'RAW', 'USER_ENTERED']"
-        value_range_body = {
-            "majorDimension": "ROWS",
-            "values": [input_values]
-        }
-        result = self.sheet.values().update(spreadsheetId=self.spreadsheetId, range=range_cell,
-                                       valueInputOption=value_input_option, body=value_range_body).execute()
+    # очиска ячеек указанных в ranfe_cell
+    def clear(self, range_cell):
+        result = self.sheet.values().clear(spreadsheetId=self.spreadsheetId, range=range_cell).execute()
         return result
 
 
@@ -99,7 +91,6 @@ INPUT_DATA_SPREADSHEET_ID = '12eg1zud0yTR1Lj36V_jju__l8kUTlyWwjvchUnryci4'
 
 
 def main():
-
     mydata = GDSheet(INPUT_DATA_SPREADSHEET_ID)
 
     # получение данных из таблицы и определенного листа
@@ -107,47 +98,18 @@ def main():
     values = mydata.get_values_from_spreadsheet(SAMPLE_RANGE_NAME)
     print(values)
 
+    # mydata.clear('avito_result!G:G')
+
     # добавление данных в лист
     SAMPLE_RANGE_NAME2 = 'avito_result!G2:G'
     myvalues = ["15011zasds", "sdsd", "sdsd22", "weq", "eljqwldbqwb"]
-    result = mydata.set_values_to_spreadsheet_columns(SAMPLE_RANGE_NAME2, myvalues)
+    result = mydata.set_values_to_spreadsheet(SAMPLE_RANGE_NAME2, myvalues, "COLUMNS")
     print(result)
 
     SAMPLE_RANGE_NAME3 = 'avito_result!C2'
     myvalues2 = ["15011zasds", "sdsd", "sdsd22", "weq", "eljqwldbqwb"]
-    result = mydata.set_values_to_spreadsheet_rows(SAMPLE_RANGE_NAME3, myvalues2)
+    result = mydata.set_values_to_spreadsheet(SAMPLE_RANGE_NAME3, myvalues2, "ROWS")
     print(result)
-
-
-    """
-    creds = get_credentials_google_api("credentials2.json", SCOPES)
-
-    sheet = get_sheet_api(creds)
-
-    # получение данных из таблицы и определенного листа
-    SAMPLE_RANGE_NAME = 'avito!A1'
-
-    values = get_values_from_spreadsheet(sheet, INPUT_DATA_SPREADSHEET_ID, SAMPLE_RANGE_NAME)
-
-    if not values:
-        print('No data found.')
-    else:
-        print(values)
-        print(len(values))
-    """
-
-    """
-    # добавление данных в лист
-    SAMPLE_RANGE_NAME2 = 'avito_result!G2:G'
-    myvalues = ["15011zasds", "sdsd", "sdsd22", "weq", "eljqwldbqwb"]
-    result = set_values_to_spreadsheet_columns(sheet, INPUT_DATA_SPREADSHEET_ID, SAMPLE_RANGE_NAME2, myvalues)
-    print(result)
-
-    SAMPLE_RANGE_NAME3 = 'avito_result!C2'
-    myvalues2 = ["15011zasds", "sdsd", "sdsd22", "weq", "eljqwldbqwb"]
-    result = set_values_to_spreadsheet_rows(sheet, INPUT_DATA_SPREADSHEET_ID, SAMPLE_RANGE_NAME3, myvalues2)
-    print(result)
-    """
 
 
 if __name__ == '__main__':
