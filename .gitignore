@@ -1,4 +1,5 @@
 .idea/
+data/
 credentials.json
 token.pickle
 *.xml
