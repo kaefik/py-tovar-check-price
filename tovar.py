@@ -70,6 +70,8 @@ class Tovar(object):
         return res
 
 
+__all__ = ("Tovar")
+
 if __name__ == "__main__":
     filename = "./data/inf.html"
     html_content = ""

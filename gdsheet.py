@@ -105,6 +105,8 @@ class GDSheet:
         return result
 
 
+__all__ = ("GDSheet")
+
 def main():
     # If modifying these scopes, delete the file token.pickle.
     SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
