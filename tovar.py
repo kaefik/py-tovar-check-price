@@ -69,6 +69,11 @@ class Tovar(object):
         res = self.data["price"] < other.data["price"]
         return res
 
+    def __str__(self):
+        str = f"Название: {self.data['title']}\nЦена: {self.data['price']}\nПродавец:{self.data['seller']}\n" \
+              f"Адрес: {self.data['adress']}\nКатегория: {self.data['category']}\n" \
+              f"Описание: {self.data['txt']}\nССылка: {self.data['url']}\n"
+        return  str
 
 __all__ = ("Tovar")
 
