@@ -70,10 +70,32 @@ class Tovar(object):
         return res
 
     def __str__(self):
-        str = f"Название: {self.data['title']}\nЦена: {self.data['price']}\nПродавец:{self.data['seller']}\n" \
-              f"Адрес: {self.data['adress']}\nКатегория: {self.data['category']}\n" \
-              f"Описание: {self.data['txt']}\nССылка: {self.data['url']}\n"
-        return  str
+        str = f"Название: {self.title()}\nЦена: {self.price()}\nПродавец:{self.seller()}\n" \
+              f"Адрес: {self.adress()}\nКатегория: {self.category()}\n" \
+              f"Описание: {self.category()}\nССылка: {self.url()}\n"
+        return str
+
+    def price(self):
+        return self.data["price"]
+
+    def title(self):
+        return self.data["title"]
+
+    def seller(self):
+        return self.data["seller"]
+
+    def description(self):
+        return self.data["txt"]
+
+    def category(self):
+        return self.data["category"]
+
+    def adress(self):
+        return self.data["adress"]
+
+    def url(self):
+        return self.data["url"]
+
 
 __all__ = ("Tovar")
 
