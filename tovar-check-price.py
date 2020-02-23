@@ -16,10 +16,34 @@ def main():
     id_google_table = '12eg1zud0yTR1Lj36V_jju__l8kUTlyWwjvchUnryci4'
 
     mydata = GDSheet(id_google_table)
-    SAMPLE_RANGE_NAME = 'avito!A2:A'
-    input_urls = mydata.get_values_from_spreadsheet(SAMPLE_RANGE_NAME)
+    input_urls = mydata.get_values_from_spreadsheet("avito!A2:A")
     print(input_urls)
     # END исходные данные
+
+    # получение урлов из результативного листа
+    myurldata = mydata.get_values_from_spreadsheet("avito_result!G2:G")
+    print(myurldata)
+    # END получение урлов из результативного листа
+
+    # оставляем только те урлы которых нет в avito_result
+    if len(myurldata)>0:
+        new_input_urls = []
+
+        for input_url in input_urls:
+            flag = True
+            for myurl in myurldata:
+                if myurl[0] == input_url[0]:
+                    flag = False
+                    break
+            if flag:
+                new_input_urls.append(input_url)
+
+        if len(new_input_urls) == 0:
+            print("Новых ссылок нет. Останавливаем обработку.")
+            return
+        input_urls = new_input_urls
+    # END оставляем только те урлы которых нет в avito_result
+
 
     avito_tovars = []
     for i, url_item in enumerate(input_urls):
@@ -39,7 +63,7 @@ def main():
     for tvr in avito_tovars:
         print(tvr)
         # название товара	цена	адрес	продавец	категория 	описание	ссылка на товар
-        row = [tvr.title(), tvr.price(), tvr.adress(), tvr.seller(), tvr.description(), tvr.category(),
+        row = [tvr.title(), tvr.price(), tvr.adress(), tvr.seller(), tvr.category(), tvr.description(),
                tvr.url()]
         mydata.append_values_to_spreadsheet("avito_result!A1", row, False)
 
