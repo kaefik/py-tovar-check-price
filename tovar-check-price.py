@@ -8,13 +8,9 @@ from gdsheet import GDSheet
 from i_utils import savefile_from_url
 
 
-def main():
-    # исходные данные
+# обработка (загрузка информации о товарах) урлов которые добавил пользователь в таблицу
+def getdata_tovar_from_input_url(id_google_table):
     scopes = ['https://www.googleapis.com/auth/spreadsheets']
-
-    # The ID and range of a sample spreadsheet.
-    id_google_table = '12eg1zud0yTR1Lj36V_jju__l8kUTlyWwjvchUnryci4'
-
     mydata = GDSheet(id_google_table)
     input_urls = mydata.get_values_from_spreadsheet("avito!A2:A")
     print(input_urls)
@@ -26,7 +22,7 @@ def main():
     # END получение урлов из результативного листа
 
     # оставляем только те урлы которых нет в avito_result
-    if len(myurldata)>0:
+    if len(myurldata) > 0:
         new_input_urls = []
 
         for input_url in input_urls:
@@ -40,10 +36,11 @@ def main():
 
         if len(new_input_urls) == 0:
             print("Новых ссылок нет. Останавливаем обработку.")
-            return
+            # очистка урлов которые добавил пользователь после обработки
+            mydata.clear("avito!A2:A")
+            return False
         input_urls = new_input_urls
     # END оставляем только те урлы которых нет в avito_result
-
 
     avito_tovars = []
     for i, url_item in enumerate(input_urls):
@@ -66,6 +63,17 @@ def main():
         row = [tvr.title(), tvr.price(), tvr.adress(), tvr.seller(), tvr.category(), tvr.description(),
                tvr.url()]
         mydata.append_values_to_spreadsheet("avito_result!A1", row, False)
+
+    # очистка урлов которые добавил пользователь после обработки
+    mydata.clear("avito!A2:A")
+    return True
+
+
+def main():
+    # исходные данные
+    id_google_table = '12eg1zud0yTR1Lj36V_jju__l8kUTlyWwjvchUnryci4'
+
+    getdata_tovar_from_input_url(id_google_table)
 
 
 if __name__ == "__main__":
