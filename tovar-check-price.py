@@ -59,8 +59,8 @@ def getdata_tovar_from_input_url(id_google_table):
 
     for tvr in avito_tovars:
         print(tvr)
-        # название товара	цена	адрес	продавец	категория 	описание	ссылка на товар
-        row = [tvr.title(), tvr.price(), tvr.adress(), tvr.seller(), tvr.category(), tvr.description(),
+        # название товара	цена    цена старая 	адрес	продавец	категория 	описание	ссылка на товар
+        row = [tvr.title(), tvr.price(), "", tvr.adress(), tvr.seller(), tvr.category(), tvr.description(),
                tvr.url()]
         mydata.append_values_to_spreadsheet("avito_result!A1", row, False)
 
