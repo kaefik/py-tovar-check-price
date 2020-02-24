@@ -54,6 +54,19 @@ class Tovar(object):
             txt = string_escape(txt.text)
             self.data["txt"] = txt.strip()
 
+    # получение данных из массива, если возвращает False, то получение данных о товаре не получилось
+    def getdata_from_array(self, arr):
+        if len(arr) != 7:
+            return False
+        self.data["title"] = arr[0]
+        self.data["price"] = arr[1]
+        self.data["adress"] = arr[2]
+        self.data["seller"] = arr[3]
+        self.data["category"] = arr[4]
+        self.data["txt"] = arr[5]
+        self.data["url"] = arr[6]
+        return True
+
     # сравнение цен товаров ==
     def __eq__(self, other):
         res = self.data["price"] == other.data["price"]
@@ -72,7 +85,7 @@ class Tovar(object):
     def __str__(self):
         str = f"Название: {self.title()}\nЦена: {self.price()}\nПродавец:{self.seller()}\n" \
               f"Адрес: {self.adress()}\nКатегория: {self.category()}\n" \
-              f"Описание: {self.category()}\nССылка: {self.url()}\n"
+              f"Описание: {self.description()}\nССылка: {self.url()}\n"
         return str
 
     def price(self):
