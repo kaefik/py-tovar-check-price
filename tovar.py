@@ -59,7 +59,7 @@ class Tovar(object):
         if len(arr) != 7:
             return False
         self.data["title"] = arr[0]
-        self.data["price"] = arr[1]
+        self.data["price"] = int(arr[1])
         self.data["adress"] = arr[2]
         self.data["seller"] = arr[3]
         self.data["category"] = arr[4]
