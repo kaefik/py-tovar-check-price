@@ -4,7 +4,7 @@ credentials.json
 token.pickle
 *.xml
 *.iml
-*.cfg
+.env
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
