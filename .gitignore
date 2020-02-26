@@ -5,6 +5,7 @@ token.pickle
 *.xml
 *.iml
 .env
+*.session
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
