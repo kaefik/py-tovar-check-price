@@ -11,8 +11,8 @@ from telethon import TelegramClient, events, sync
 class SendNotify:
 
     # инициализация
-    def __init__(self):
-        dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
+    def __init__(self, namefile_env=".env"):
+        dotenv_path = os.path.join(os.path.dirname(__file__), namefile_env)
         # print((dotenv_path))
         if os.path.exists(dotenv_path):
             load_dotenv(dotenv_path)
