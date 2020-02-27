@@ -1,6 +1,11 @@
+"""
+пример работы бота телеграмм
+
+"""
+
 import os
-from dotenv import load_dotenv
-from telethon import TelegramClient, events
+from dotenv import load_dotenv  # pip3 install python-dotenv
+from telethon import TelegramClient, events  # pip3 install Telethon
 
 dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
 print((dotenv_path))
@@ -20,6 +25,7 @@ print(bot_token)
 
 
 bot = TelegramClient(app_name, app_api_id, app_api_hash).start(bot_token=bot_token)
+client = [] # клиент
 
 @bot.on(events.NewMessage(pattern='/start'))
 async def start(event):
@@ -30,6 +36,10 @@ async def start(event):
 @bot.on(events.NewMessage)
 async def echo(event):
     """Echo the user message."""
+    chat = await event.get_input_chat()
+    sender = await event.get_sender()
+    buttons = await event.get_buttons()
+    print(sender.id)
     await event.respond(event.text)
 
 def main():
