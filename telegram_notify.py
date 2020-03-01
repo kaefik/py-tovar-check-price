@@ -6,7 +6,7 @@
 
 import os
 from dotenv import load_dotenv
-from telethon import TelegramClient, events, sync
+from telethon import TelegramClient, events, sync, connection
 
 class SendNotify:
 
@@ -21,9 +21,21 @@ class SendNotify:
         self.app_name = os.getenv("TLG_APP_NAME")
         self.bot_token = os.getenv("I_BOT_TOKEN")
         self.client = os.getenv("TLG_CLIENT")
+        self.proxy_server = os.getenv("TLG_PROXY_SERVER")
+        self.proxy_port = int(os.getenv("TLG_PROXY_PORT"))
+        self.proxy_key = os.getenv("TLG_PROXY_KEY")
 
-        self._tlg = TelegramClient(self.app_name , self.app_api_id, self.app_api_hash)
-        self._tlg.start(bot_token=self.bot_token)
+        if self.proxy_server is None or self.proxy_port is None or self.proxy_key is None:
+            print("Нет настроек прокси сервера телеграмма")
+            self._tlg = TelegramClient(self.app_name, self.app_api_id, self.app_api_hash)
+            self._tlg.start(bot_token=self.bot_token)
+        else:
+            proxy = (self.proxy_server, self.proxy_port, self.proxy_key)
+            self._tlg = TelegramClient(self.app_name, self.app_api_id, self.app_api_hash,
+                                       connection=connection.ConnectionTcpMTProxyRandomizedIntermediate,
+                                       proxy=proxy)
+            self._tlg.start(bot_token=self.bot_token)
+
 
     # добавление клиента которому нужно отправлять нотификации
     def add_clent(self, event):
